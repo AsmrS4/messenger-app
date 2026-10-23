@@ -6,5 +6,8 @@ dependencies {
 }
 
 tasks.named('test') {
-	useJUnitPlatform()
+    useJUnitPlatform()
+    doFirst {
+        println "Test classes dirs: ${testClassesDirs.files}"
+    }
 }
