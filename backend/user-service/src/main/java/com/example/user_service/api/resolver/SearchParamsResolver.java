@@ -27,13 +27,13 @@ public class SearchParamsResolver {
             throw new IllegalArgumentException("Максимальный возраст должен быть положительным числом.");
         }
         if (params.getMinAge() != null && params.getMaxAge() != null && params.getMinAge() > params.getMaxAge())  {
-            throw new IllegalArgumentException("Минимальная граница значения парметра \"возраст\" должена быть меньше максимальной границы.");
+            throw new IllegalArgumentException("Минимальная граница значения параметра \"возраст\" должена быть меньше максимальной границы.");
         }
 
-        if(params.getCity().trim().length() > 255) {
+        if(params.getCity() != null && params.getCity().trim().length() > 255) {
             throw  new IllegalArgumentException("Допустимая длина строки параметра \"город\" - 255 символов.");
         }
-        if(params.getSearchName().trim().length() > 255) {
+        if(params.getSearchName() != null && params.getSearchName().trim().length() > 255) {
             throw  new IllegalArgumentException("Допустимая длина строки параметра \"ФИО\" - 255 символов.");
         }
     }

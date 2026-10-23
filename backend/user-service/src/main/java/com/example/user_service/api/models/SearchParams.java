@@ -6,7 +6,7 @@ import lombok.Data;
 public class SearchParams {
     private String searchName;
     private String city;
-    private Integer minAge = 150;
-    private Integer maxAge = 0;
+    private Integer minAge = 14;
+    private Integer maxAge = 150;
     private Integer page = 1;
 }
