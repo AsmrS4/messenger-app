@@ -1,0 +1,10 @@
+plugins {
+    id 'messenger.java-conventions'
+}
+
+dependencies {
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
