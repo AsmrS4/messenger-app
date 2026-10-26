@@ -8,6 +8,9 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
     doFirst {
-        println "Test classes dirs: ${testClassesDirs.files}"
+        var mockitoJar = classpath.find { it.name.contains("mockito-core") }
+        if (mockitoJar != null) {
+            jvmArgs("-javaagent:$mockitoJar")
+        }
     }
 }
