@@ -3,6 +3,7 @@ package com.example.user_service.configuration;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.mapper.RowMapper;
 import org.jdbi.v3.core.spi.JdbiPlugin;
+import org.jdbi.v3.sqlobject.SqlObjectPlugin;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
@@ -12,6 +13,12 @@ import java.util.List;
 
 @Configuration
 public class JdbiConfiguration {
+    @Bean
+    public SqlObjectPlugin sqlObjectPlugin() {
+        return new SqlObjectPlugin();
+    }
+
+
     @Bean
     public Jdbi jdbi(DataSource dataSource, List<JdbiPlugin> jdbiPlugins, List<RowMapper<?>> rowMappers) {
 
