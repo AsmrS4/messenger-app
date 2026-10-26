@@ -1,5 +1,6 @@
 package com.example.user_service.configuration;
 
+import com.example.user_service.core.persistence.UserRepo;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.mapper.RowMapper;
 import org.jdbi.v3.core.spi.JdbiPlugin;
@@ -18,10 +19,8 @@ public class JdbiConfiguration {
         return new SqlObjectPlugin();
     }
 
-
     @Bean
     public Jdbi jdbi(DataSource dataSource, List<JdbiPlugin> jdbiPlugins, List<RowMapper<?>> rowMappers) {
-
         TransactionAwareDataSourceProxy proxy = new TransactionAwareDataSourceProxy(dataSource);
         Jdbi jdbi = Jdbi.create(proxy);
 
@@ -29,5 +28,10 @@ public class JdbiConfiguration {
         rowMappers.forEach(jdbi::registerRowMapper);
 
         return jdbi;
+    }
+
+    @Bean
+    public UserRepo userRepo(Jdbi jdbi) {
+        return jdbi.onDemand(UserRepo.class);
     }
 }

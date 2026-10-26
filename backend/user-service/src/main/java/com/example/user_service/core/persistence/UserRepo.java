@@ -18,45 +18,47 @@ import java.util.UUID;
 
 public interface UserRepo {
     @SqlUpdate(
-            "INSERT INTO users(full_name, email, login, phone, birth_date, city, create_time) " +
-            "VALUES (:fullName, :email, :login, :phone, :birthDate, :city, :now)"
+            """
+            INSERT INTO users(full_name, email, login, phone, birth_date, city, create_time)
+            VALUES (:fullName, :email, :login, :phone, :birthDate, :city, :now)
+            """
     )
     @Timestamped
     @GetGeneratedKeys("id")
     UUID saveUser(@BindMethods User user);
 
-    @SqlQuery(
-            "SELECT id, fullName, email, login, phone, birthDate, city, imageId " +
-            "FROM users " +
-            "WHERE users.id = :id"
+    @SqlQuery("""
+    SELECT id, full_name AS fullName, email, login, phone, birth_date AS birthDate, city, image_id AS image 
+    FROM users
+     WHERE users.id = :id
+    """
     )
     @RegisterConstructorMapper(UserProfile.class)
     UserProfile findById(@Bind("id") UUID id);
 
-    @SqlQuery(
-            "SELECT id, fullName, email, login, phone, birthDate, city, imageId " +
-                    "FROM users " +
-                    "WHERE users.login= :login"
+    @SqlQuery("""
+            SELECT id, full_name AS fullName, email, login, phone, birth_date AS birthDate, city, image_id AS image 
+            FROM users 
+            WHERE users.login= :login
+            """
     )
     @RegisterConstructorMapper(UserProfile.class)
     UserProfile findByLogin(@Bind("login") String login);
 
-    @SqlUpdate(
-            "UPDATE users " +
-            "SET full_name = :fullName, email = :email, login = :login, phone = :phone, city = :city, birth_date = :birthDate " +
-            "WHERE users.id = :id"
+    @SqlUpdate("""
+            UPDATE users SET full_name = :fullName, email = :email, login = :login, phone = :phone, city = :city, birth_date = :birthDate 
+            WHERE users.id = :id
+            """
     )
     int updateUser(@Bind("id") UUID id, @BindBean UpdatePayload payload);
 
-    @SqlUpdate(
-            "UPDATE users " +
-            "SET image_id = :imageId " +
-            "WHERE users.id = :id"
-    )
+    @SqlUpdate("""
+            UPDATE users SET image_id = :imageId WHERE users.id = :id
+            """)
     int updateUserImage(@Bind("id") UUID id, @Bind("imageId") UUID imageId);
 
     @SqlQuery("""
-        SELECT id, full_name, email, login, phone, birth_date, city, image_id
+        SELECT id, full_name AS fullName, email, login, phone, birth_date AS birthDate, city, image_id AS image
         FROM users
         WHERE (:searchName IS NULL OR full_name ILIKE '%' || :searchName || '%')
           AND (:city IS NULL OR city = :city)

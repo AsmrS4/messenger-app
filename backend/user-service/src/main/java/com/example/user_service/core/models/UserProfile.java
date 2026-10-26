@@ -6,5 +6,5 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 @Builder
-public record UserProfile(String fullName, String email, String login, String phone, LocalDate birthDate, String city, UUID image) {
+public record UserProfile(UUID id, String fullName, String email, String login, String phone, LocalDate birthDate, String city, UUID image) {
 }
