@@ -2,6 +2,7 @@ package com.example.user_service.core.persistence;
 
 import com.example.user_service.api.models.SearchParams;
 import com.example.user_service.api.models.UpdatePayload;
+import com.example.user_service.core.models.UserProfile;
 import org.jdbi.v3.sqlobject.config.RegisterConstructorMapper;
 import org.jdbi.v3.sqlobject.customizer.Bind;
 import org.jdbi.v3.sqlobject.customizer.BindBean;
@@ -25,12 +26,20 @@ public interface UserRepo {
     UUID saveUser(@BindMethods User user);
 
     @SqlQuery(
-            "SELECT id, fullName, email, login, phone, birthDate, city, imageId, createTime " +
+            "SELECT id, fullName, email, login, phone, birthDate, city, imageId " +
             "FROM users " +
             "WHERE users.id = :id"
     )
-    @RegisterConstructorMapper(User.class)
-    User findById(@Bind("id") UUID id);
+    @RegisterConstructorMapper(UserProfile.class)
+    UserProfile findById(@Bind("id") UUID id);
+
+    @SqlQuery(
+            "SELECT id, fullName, email, login, phone, birthDate, city, imageId " +
+                    "FROM users " +
+                    "WHERE users.login= :login"
+    )
+    @RegisterConstructorMapper(UserProfile.class)
+    UserProfile findByLogin(@Bind("login") String login);
 
     @SqlUpdate(
             "UPDATE users " +
@@ -47,7 +56,7 @@ public interface UserRepo {
     int updateUserImage(@Bind("id") UUID id, @Bind("imageId") UUID imageId);
 
     @SqlQuery("""
-        SELECT id, full_name, email, login, phone, birth_date, city, image_id, create_time
+        SELECT id, full_name, email, login, phone, birth_date, city, image_id
         FROM users
         WHERE (:searchName IS NULL OR full_name ILIKE '%' || :searchName || '%')
           AND (:city IS NULL OR city = :city)
@@ -55,8 +64,8 @@ public interface UserRepo {
         ORDER BY id
         LIMIT 20 OFFSET :offset
         """)
-    @RegisterConstructorMapper(User.class)
-    List<User> findAllWithParams(
+    @RegisterConstructorMapper(UserProfile.class)
+    List<UserProfile> findAllWithParams(
             @BindBean SearchParams params,
             @Bind("minBirthDate") LocalDate minBirthDate,
             @Bind("maxBirthDate") LocalDate maxBirthDate,
@@ -70,8 +79,7 @@ public interface UserRepo {
           AND (:city IS NULL OR city = :city)
           AND birth_date BETWEEN :minBirthDate AND :maxBirthDate
         """)
-    @RegisterConstructorMapper(User.class)
-    List<User> countTotal(
+    long countTotal(
             @BindBean SearchParams params,
             @Bind("minBirthDate") LocalDate minBirthDate,
             @Bind("maxBirthDate") LocalDate maxBirthDate
