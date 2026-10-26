@@ -1,6 +1,7 @@
 package com.example.user_service.api.controller;
 
 import com.example.user_service.api.models.UpdatePayload;
+import com.example.user_service.api.resolver.UserPayloadResolver;
 import com.example.user_service.core.models.UserProfile;
 import com.example.user_service.core.service.ProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,15 +14,17 @@ import java.util.UUID;
 @RequestMapping("/api/users/profile")
 @ResponseStatus(HttpStatus.OK)
 public class ProfileController {
-
+    private final UserPayloadResolver userPayloadResolver;
     private final ProfileService profileService;
 
-    public ProfileController(@Autowired ProfileService service) {
+    public ProfileController(@Autowired ProfileService service, @Autowired UserPayloadResolver userPayloadResolver) {
         this.profileService = service;
+        this.userPayloadResolver = userPayloadResolver;
     }
 
     @PutMapping("/me")
     public UserProfile updateUser(UpdatePayload payload) {
+        userPayloadResolver.resolveUpdatePayload(payload);
         return profileService.updateCurrentUserProfile(payload);
     }
 
