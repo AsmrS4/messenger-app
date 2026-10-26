@@ -46,9 +46,6 @@ public interface UserRepo {
     )
     int updateUserImage(@Bind("id") UUID id, @Bind("imageId") UUID imageId);
 
-    @SqlQuery("SELECT COUNT(*) FROM users")
-    long countRows();
-
     @SqlQuery("""
         SELECT id, full_name, email, login, phone, birth_date, city, image_id, create_time
         FROM users
@@ -64,5 +61,19 @@ public interface UserRepo {
             @Bind("minBirthDate") LocalDate minBirthDate,
             @Bind("maxBirthDate") LocalDate maxBirthDate,
             @Bind("offset") int offset
+    );
+
+    @SqlQuery("""
+        SELECT COUNT(*)
+        FROM users
+        WHERE (:searchName IS NULL OR full_name ILIKE '%' || :searchName || '%')
+          AND (:city IS NULL OR city = :city)
+          AND birth_date BETWEEN :minBirthDate AND :maxBirthDate
+        """)
+    @RegisterConstructorMapper(User.class)
+    List<User> countTotal(
+            @BindBean SearchParams params,
+            @Bind("minBirthDate") LocalDate minBirthDate,
+            @Bind("maxBirthDate") LocalDate maxBirthDate
     );
 }
