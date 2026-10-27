@@ -1,19 +1,25 @@
 package com.example.user_service.core.persistence;
 
+import com.example.user_service.api.models.CreatePayload;
+import com.example.user_service.api.models.SearchParams;
 import com.example.user_service.api.models.UpdatePayload;
 import com.example.user_service.configuration.TestBeansConfiguration;
 import com.example.user_service.core.models.UserProfile;
+import com.example.user_service.core.utils.UserTestFactory;
 import lombok.RequiredArgsConstructor;
 import org.jdbi.v3.core.Jdbi;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestConstructor;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -23,14 +29,49 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 @SpringBootTest
 @Import(TestBeansConfiguration.class)
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
+@Transactional
 @RequiredArgsConstructor
 public class UserRepoTest {
     private final UserRepo repo;
     private final Jdbi jdbi;
+    private static List<CreatePayload> createUserPayloads;
+    private static final int LIMIT = 20;
 
     @BeforeEach
-    void cleanDatabase() {
+    public void cleanDatabase() {
         jdbi.useHandle(handle -> handle.execute("TRUNCATE TABLE users CASCADE"));
+    }
+
+    @BeforeAll
+    public static void setUp() {
+        CreatePayload newUser1 = CreatePayload.builder()
+                .fullName("User1")
+                .login("test_user1")
+                .email("user1@example.com")
+                .phone("+79005553535")
+                .city("Tomsk")
+                .birthDate(LocalDate.parse("2000-01-01"))
+                .password("password123")
+                .build();
+        CreatePayload newUser2 = CreatePayload.builder()
+                .fullName("User2")
+                .login("test_user2")
+                .email("user2@example.com")
+                .phone("+79005553536")
+                .city("Tomsk")
+                .birthDate(LocalDate.parse("2000-01-01"))
+                .password("password123")
+                .build();
+        CreatePayload newUser3 = CreatePayload.builder()
+                .fullName("User3")
+                .login("test_user3")
+                .email("user3@example.com")
+                .phone("+79005553537")
+                .city("Novosibirsk")
+                .birthDate(LocalDate.parse("2000-01-01"))
+                .password("password123")
+                .build();
+        createUserPayloads = List.of(newUser1, newUser2, newUser3);
     }
 
     @Test
@@ -293,5 +334,85 @@ public class UserRepoTest {
 
         assertThat(id).isNotNull();
         assertThat(exists).isFalse();
+    }
+
+    @Test
+    @DisplayName("Проверка нахождения списка пользователей с параметрами по умолчанию")
+    public void shouldReturnUsers() {
+        createUserPayloads.forEach(payload -> UserTestFactory.createUser(repo, payload));
+        SearchParams params = new SearchParams();
+
+        LocalDate minAgeDateBound = LocalDate.now().minusYears(params.getMaxAge());
+        LocalDate maxAgeDateBound = LocalDate.now().minusYears(params.getMinAge());
+
+        List<UserProfile> foundUsers = repo.findAllWithParams(params, minAgeDateBound, maxAgeDateBound, (params.getPage() - 1) * LIMIT);
+
+        assertThat(foundUsers).isNotNull();
+        assertThat(foundUsers.size()).isEqualTo(3);
+    }
+
+    @Test
+    @DisplayName("Проверка нахождения списка пользователей по совпадению ФИО")
+    public void shouldReturnUsersByFullNameCoincidence() {
+        createUserPayloads.forEach(payload -> UserTestFactory.createUser(repo, payload));
+        SearchParams params = new SearchParams();
+        params.setSearchName("User1");
+
+        LocalDate minAgeDateBound = LocalDate.now().minusYears(params.getMaxAge());
+        LocalDate maxAgeDateBound = LocalDate.now().minusYears(params.getMinAge());
+
+        List<UserProfile> foundUsers = repo.findAllWithParams(params, minAgeDateBound, maxAgeDateBound, (params.getPage() - 1) * LIMIT);
+
+        assertThat(foundUsers).isNotNull();
+        assertThat(foundUsers.size()).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("Проверка на пустой список при не совпадении ФИО")
+    public void shouldReturnEmptyUsersWithNoFullNameCoincidence() {
+        createUserPayloads.forEach(payload -> UserTestFactory.createUser(repo, payload));
+        SearchParams params = new SearchParams();
+        params.setSearchName("User123");
+
+        LocalDate minAgeDateBound = LocalDate.now().minusYears(params.getMaxAge());
+        LocalDate maxAgeDateBound = LocalDate.now().minusYears(params.getMinAge());
+
+        List<UserProfile> foundUsers = repo.findAllWithParams(params, minAgeDateBound, maxAgeDateBound, (params.getPage() - 1) * LIMIT);
+
+        assertThat(foundUsers).isNotNull();
+        assertThat(foundUsers.size()).isEqualTo(0);
+    }
+
+    @Test
+    @DisplayName("Проверка нахождения списка пользователей по совпадению города")
+    public void shouldReturnUsersByCityCoincidence() {
+        createUserPayloads.forEach(payload -> UserTestFactory.createUser(repo, payload));
+        SearchParams params = new SearchParams();
+        params.setCity("Novosibirsk");
+
+        LocalDate minAgeDateBound = LocalDate.now().minusYears(params.getMaxAge());
+        LocalDate maxAgeDateBound = LocalDate.now().minusYears(params.getMinAge());
+
+        List<UserProfile> foundUsers = repo.findAllWithParams(params, minAgeDateBound, maxAgeDateBound, (params.getPage() - 1) * LIMIT);
+
+        assertThat(foundUsers).isNotNull();
+        assertThat(foundUsers.size()).isEqualTo(1);
+        assertThat(foundUsers.getFirst().fullName()).isEqualTo("User3");
+    }
+
+    @Test
+    @DisplayName("Проверка на пустой список при не совпадении города")
+    public void shouldReturnEmptyUsersWithNoCityCoincidence() {
+        createUserPayloads.forEach(payload -> UserTestFactory.createUser(repo, payload));
+        SearchParams params = new SearchParams();
+        params.setCity("Moscow");
+
+        LocalDate minAgeDateBound = LocalDate.now().minusYears(params.getMaxAge());
+        LocalDate maxAgeDateBound = LocalDate.now().minusYears(params.getMinAge());
+
+        List<UserProfile> foundUsers = repo.findAllWithParams(params, minAgeDateBound, maxAgeDateBound, (params.getPage() - 1) * LIMIT);
+
+        assertThat(foundUsers).isNotNull();
+        assertThat(foundUsers.size()).isEqualTo(0);
     }
 }
