@@ -1,0 +1,16 @@
+plugins {
+    id 'messenger.java-conventions'
+}
+
+dependencies {
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+    doFirst {
+        var mockitoJar = classpath.find { it.name.contains("mockito-core") }
+        if (mockitoJar != null) {
+            jvmArgs("-javaagent:$mockitoJar")
+        }
+    }
+}
