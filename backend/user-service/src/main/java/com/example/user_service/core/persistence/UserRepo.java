@@ -64,14 +64,13 @@ public interface UserRepo {
           AND (:city IS NULL OR city = :city)
           AND birth_date BETWEEN :minBirthDate AND :maxBirthDate
         ORDER BY id
-        LIMIT 20 OFFSET :offset
+        LIMIT 20 OFFSET :page
         """)
     @RegisterConstructorMapper(UserProfile.class)
     List<UserProfile> findAllWithParams(
             @BindBean SearchParams params,
             @Bind("minBirthDate") LocalDate minBirthDate,
-            @Bind("maxBirthDate") LocalDate maxBirthDate,
-            @Bind("offset") int offset
+            @Bind("maxBirthDate") LocalDate maxBirthDate
     );
 
     @SqlQuery("""
@@ -86,4 +85,25 @@ public interface UserRepo {
             @Bind("minBirthDate") LocalDate minBirthDate,
             @Bind("maxBirthDate") LocalDate maxBirthDate
     );
+
+    @SqlQuery("""
+            SELECT EXISTS(
+                SELECT 1 FROM users WHERE users.login = :login
+            )
+            """)
+    boolean existsByLogin(@Bind("login") String login);
+
+    @SqlQuery("""
+            SELECT EXISTS(
+                SELECT 1 FROM users WHERE users.email = :email
+            )
+            """)
+    boolean existsByEmail(@Bind("email") String email);
+
+    @SqlQuery("""
+            SELECT EXISTS(
+                SELECT 1 FROM users WHERE users.phone = :phone
+            )
+            """)
+    boolean existsByPhone(@Bind("phone") String phone);
 }

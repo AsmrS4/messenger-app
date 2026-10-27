@@ -107,6 +107,16 @@ public class UserRepoTest {
     }
 
     @Test
+    @DisplayName("Проверка на получение несуществующего пользователя в системе")
+    public void shouldReturnNullWithNotExistingUser() {
+        UUID userId = UUID.randomUUID();
+
+        UserProfile user = repo.findById(userId);
+
+        assertThat(user).isNull();
+    }
+
+    @Test
     @DisplayName("Проверка получения пользователя по логину из БД")
     public void shouldFindSavedUserByLoginSuccessfully() {
         User newUser = new User(
@@ -156,5 +166,132 @@ public class UserRepoTest {
         int updatedRows = repo.updateUser(id, payload);
 
         assertThat(updatedRows).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("Проверка на занятый логин")
+    public void shouldReturnTrueWithOccupiedLogin() {
+        User newUser = new User(
+                "User",
+                "user@example.com",
+                "test_user",
+                "+79005553535",
+                LocalDate.parse("2000-01-01"),
+                "Tomsk",
+                null,
+                LocalDateTime.now()
+        );
+
+        UUID id = repo.saveUser(newUser);
+        boolean exists = repo.existsByLogin("test_user");
+
+        assertThat(id).isNotNull();
+        assertThat(exists).isTrue();
+    }
+
+    @Test
+    @DisplayName("Проверка на незанятый логин")
+    public void shouldReturnFalseWithNotOccupiedLogin() {
+        User newUser = new User(
+                "User",
+                "user@example.com",
+                "test_user",
+                "+79005553535",
+                LocalDate.parse("2000-01-01"),
+                "Tomsk",
+                null,
+                LocalDateTime.now()
+        );
+
+        UUID id = repo.saveUser(newUser);
+        boolean exists = repo.existsByLogin("test_user2");
+
+        assertThat(id).isNotNull();
+        assertThat(exists).isFalse();
+    }
+
+    @Test
+    @DisplayName("Проверка на занятый email")
+    public void shouldReturnTrueWithOccupiedEmail() {
+        User newUser = new User(
+                "User",
+                "user@example.com",
+                "test_user",
+                "+79005553535",
+                LocalDate.parse("2000-01-01"),
+                "Tomsk",
+                null,
+                LocalDateTime.now()
+        );
+
+        UUID id = repo.saveUser(newUser);
+        boolean exists = repo.existsByEmail("user@example.com");
+
+        assertThat(id).isNotNull();
+        assertThat(exists).isTrue();
+    }
+
+    @Test
+    @DisplayName("Проверка на незанятый email")
+    public void shouldReturnFalseWithNotOccupiedEmail() {
+        User newUser = new User(
+                "User",
+                "user@example.com",
+                "test_user",
+                "+79005553535",
+                LocalDate.parse("2000-01-01"),
+                "Tomsk",
+                null,
+                LocalDateTime.now()
+        );
+
+        UUID id = repo.saveUser(newUser);
+        boolean exists = repo.existsByEmail("user2@example.com");
+
+        assertThat(id).isNotNull();
+        assertThat(exists).isFalse();
+
+    }
+
+    @Test
+    @DisplayName("Проверка на занятый номер телефона")
+    public void shouldReturnTrueWithOccupiedPhone() {
+        User newUser = new User(
+                "User",
+                "user@example.com",
+                "test_user",
+                "+79005553535",
+                LocalDate.parse("2000-01-01"),
+                "Tomsk",
+                null,
+                LocalDateTime.now()
+        );
+
+        UUID id = repo.saveUser(newUser);
+        boolean exists = repo.existsByPhone("+79005553535");
+
+        assertThat(id).isNotNull();
+        assertThat(exists).isTrue();
+    }
+
+    @Test
+    @DisplayName("Проверка на незанятый номер телефона")
+    public void shouldReturnFalseWithNotOccupiedPhone() {
+        User newUser = new User(
+                "User",
+                "user@example.com",
+                "test_user",
+                "+79005553535",
+                LocalDate.parse("2000-01-01"),
+                "Tomsk",
+                null,
+                LocalDateTime.now()
+        );
+
+        UUID id = repo.saveUser(newUser);
+        boolean exists = repo.existsByPhone("+79005553536");
+
+        assertThat(id).isNotNull();
+        assertThat(exists).isFalse();
     }
 }
