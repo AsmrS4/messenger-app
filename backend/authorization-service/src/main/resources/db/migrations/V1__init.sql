@@ -1,0 +1,14 @@
+CREATE TABLE IF NOT EXISTS credentials
+(
+    id BIGINT PRIMARY KEY,
+    user_id uuid UNIQUE NOT NULL,
+    login VARCHAR(255) UNIQUE NOT NULL,
+    hash_password TEXT UNIQUE NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS blacklist
+(
+    id BIGINT PRIMARY KEY,
+    token TEXT UNIQUE NOT NULL
+);
+
