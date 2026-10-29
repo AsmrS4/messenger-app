@@ -1,14 +1,24 @@
 server:
-  port: 8001
+  port: ${USER_PORT:8001}
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+      force-request: true
+      force-response: true
+  tomcat:
+    uri-encoding: UTF-8
+    forward-headers-strategy: framework
 
 spring:
   application:
     name: user-service
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/users_db
-    username: postgres
-    password: postgres
+    url: ${USER_DB_URL:jdbc:postgresql://localhost:5432/users_db}
+    username: ${USER_DATASOURCE_USERNAME:postgres}
+    password: ${USER_DATASOURCE_PASSWORD:postgres}
 
   flyway:
     enabled: true
@@ -16,5 +26,5 @@ spring:
     baseline-on-migrate: true
 
 jwt:
-  secret-key: somesecretkeyHits2026somesecretkeyHits2026somesecretkeyHits2026somesecretkeyHits2026somesecretkeyHits2026
-  life-time: 30m
+  secret-key: ${SECRET_KEY:devSecretKeyForLocalDevelopmentOnly123456789}
+  life-time: ${ACCESS_LIFETIME:30m}

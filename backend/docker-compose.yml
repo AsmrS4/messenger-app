@@ -4,8 +4,8 @@ services:
     image: postgres:15
     container_name: users-database
     environment:
-      - POSTGRES_USERNAME=postgres
-      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=${USER_DATASOURCE_USER:-postgres}
+      - POSTGRES_PASSWORD=${USER_DATASOURCE_PASSWORD:-postgres}
       - POSTGRES_DB=users_db
     volumes:
       - users_data:/var/lib/postgresql/data
@@ -20,8 +20,29 @@ services:
       retries: 5
     restart: unless-stopped
 
+  auth-db:
+    image: postgres:15
+    container_name: auth-database
+    environment:
+      - POSTGRES_USER=${AUTH_DATASOURCE_USER:-postgres}
+      - POSTGRES_PASSWORD=${AUTH_DATASOURCE_PASSWORD:-postgres}
+      - POSTGRES_DB=auth_db
+    volumes:
+      - auth_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    networks:
+      - app-network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
 volumes:
   users_data:
+  auth_data:
 
 networks:
   app-network:
