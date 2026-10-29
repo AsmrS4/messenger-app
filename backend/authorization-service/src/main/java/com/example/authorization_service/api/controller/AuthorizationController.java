@@ -1,4 +1,4 @@
-package com.example.authorization_service.api;
+package com.example.authorization_service.api.controller;
 
 import com.example.authorization_service.api.models.AuthCredentials;
 import com.example.authorization_service.api.models.AuthResponse;

@@ -9,12 +9,15 @@ import com.example.user_service.core.models.Users;
 import com.example.user_service.core.persistence.User;
 import com.example.user_service.core.persistence.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationServiceException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -45,17 +48,17 @@ public class UserService implements UserManagement, ProfileService {
         return repository.findById(userId);
     }
 
-    //TODO: после настройки Spring Security
     @Override
     @Transactional
     public UserProfile updateCurrentUserProfile(UpdatePayload payload) {
-        return null;
+        UUID currentUserId = getCurrentUser().id();
+        repository.updateUser(currentUserId, payload);
+        return getProfileByUUID(currentUserId);
     }
 
-    //TODO: после настройки Spring Security
     @Override
     public UserProfile getCurrentProfile() {
-        return null;
+        return getCurrentUser();
     }
 
     @Override
@@ -92,5 +95,14 @@ public class UserService implements UserManagement, ProfileService {
 
         if(repository.existsByPhone(payload.getPhone()))
             throw new IllegalArgumentException("Номер %s занят".formatted(payload.getPhone()));
+    }
+
+    private UserProfile getCurrentUser() {
+        try {
+            UUID userId = (UUID) Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getPrincipal();
+            return getProfileByUUID(userId);
+        } catch (Exception ex) {
+            throw new AuthenticationServiceException("Вы не авторизованы");
+        }
     }
 }
