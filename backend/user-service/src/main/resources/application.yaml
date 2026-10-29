@@ -14,3 +14,7 @@ spring:
     enabled: true
     locations: classpath:db/migrations
     baseline-on-migrate: true
+
+jwt:
+  secret-key: somesecretkeyHits2026somesecretkeyHits2026somesecretkeyHits2026somesecretkeyHits2026somesecretkeyHits2026
+  life-time: 30m

@@ -29,11 +29,12 @@ public class AuthService {
 
         return createSession(credentials);
     }
-    //TODO: сетевой запрос в user-service для создания данных о пользователе,
-    // затем - сохранение в локальную БД.
+
     @Transactional
     public AuthResponse registerUser(UserCreatePayload payload) {
         UUID userId = resolver.resolve(payload);
+        if(userId == null) return null;
+
         UserLoginCredentials credentials = createCredentials(userId, payload);
         credentialsRepository.saveCredentials(credentials);
 

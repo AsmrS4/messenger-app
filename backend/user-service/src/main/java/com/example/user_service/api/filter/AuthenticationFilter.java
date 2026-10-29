@@ -42,7 +42,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
         String token = authHeader.substring(7);
 
         try {
-            authClient.checkSession(token);
+            authClient.checkSession(authHeader);
             UUID userId = parser.getUserId(token);
             if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
