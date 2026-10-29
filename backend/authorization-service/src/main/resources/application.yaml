@@ -1,0 +1,16 @@
+server:
+  port: 8002
+
+spring:
+  application:
+    name: authorization-service
+
+  datasource:
+    url: jdbc:postgresql://localhost:5433/auth_db
+    username: postgres
+    password: postgres
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migrations
+    baseline-on-migrate: true
