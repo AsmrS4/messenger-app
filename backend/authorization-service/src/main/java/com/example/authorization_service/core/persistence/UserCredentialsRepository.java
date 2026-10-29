@@ -1,5 +1,6 @@
 package com.example.authorization_service.core.persistence;
 
+import com.example.authorization_service.api.models.UpdateCredentials;
 import com.example.authorization_service.core.persistence.entity.UserLoginCredentials;
 import org.jdbi.v3.sqlobject.config.RegisterConstructorMapper;
 import org.jdbi.v3.sqlobject.customizer.Bind;
@@ -30,7 +31,7 @@ public interface UserCredentialsRepository {
             UPDATE credentials SET login = :login
             WHERE credentials.user_id = :userId
             """)
-    int updateUserCredentials(@Bind("login") String login, @Bind("userId")UUID userId);
+    int updateUserCredentials(@BindMethods UpdateCredentials credentials);
 
     @SqlQuery("""
             SELECT user_id, login, hash_password FROM credentials

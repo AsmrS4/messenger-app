@@ -2,6 +2,7 @@ package com.example.authorization_service.api.controller;
 
 import com.example.authorization_service.api.models.AuthCredentials;
 import com.example.authorization_service.api.models.AuthResponse;
+import com.example.authorization_service.api.models.UpdateCredentials;
 import com.example.authorization_service.api.models.UserCreatePayload;
 import com.example.authorization_service.core.service.auth.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,11 @@ public class AuthorizationController {
     @PostMapping("/register")
     public AuthResponse registerUser(@RequestBody UserCreatePayload payload){
         return authService.registerUser(payload);
+    }
+
+    @PostMapping("/update")
+    public void updateCredentials(@RequestBody UpdateCredentials credentials) {
+        authService.updateCredentials(credentials);
     }
 
     @PostMapping("/logout")

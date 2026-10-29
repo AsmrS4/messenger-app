@@ -2,13 +2,15 @@ package com.example.user_service.core.service;
 
 import com.example.user_service.api.models.CreatePayload;
 import com.example.user_service.api.models.SearchParams;
+import com.example.user_service.api.models.UpdateCredentials;
 import com.example.user_service.api.models.UpdatePayload;
+import com.example.user_service.core.http.AuthenticationClient;
 import com.example.user_service.core.models.Pagination;
 import com.example.user_service.core.models.UserProfile;
 import com.example.user_service.core.models.Users;
 import com.example.user_service.core.persistence.User;
 import com.example.user_service.core.persistence.UserRepo;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -21,13 +23,11 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class UserService implements UserManagement, ProfileService {
     private final static int LIMIT = 20;
     private final UserRepo repository;
-
-    public UserService(@Autowired UserRepo repo) {
-        this.repository = repo;
-    }
+    private final AuthenticationClient client;
 
     @Override
     @Transactional
@@ -53,6 +53,7 @@ public class UserService implements UserManagement, ProfileService {
     public UserProfile updateCurrentUserProfile(UpdatePayload payload) {
         UUID currentUserId = getCurrentUser().id();
         repository.updateUser(currentUserId, payload);
+        client.updateCredentials(new UpdateCredentials(currentUserId, payload.getLogin()));
         return getProfileByUUID(currentUserId);
     }
 

@@ -2,6 +2,7 @@ package com.example.authorization_service.core.service.auth;
 
 import com.example.authorization_service.api.models.AuthCredentials;
 import com.example.authorization_service.api.models.AuthResponse;
+import com.example.authorization_service.api.models.UpdateCredentials;
 import com.example.authorization_service.api.models.UserCreatePayload;
 import com.example.authorization_service.core.persistence.UserCredentialsRepository;
 import com.example.authorization_service.core.persistence.entity.UserLoginCredentials;
@@ -39,6 +40,11 @@ public class AuthService {
         credentialsRepository.saveCredentials(credentials);
 
         return createSession(credentials);
+    }
+
+    @Transactional
+    public void updateCredentials(UpdateCredentials credentials) {
+        credentialsRepository.updateUserCredentials(credentials);
     }
 
     @Transactional
