@@ -5,10 +5,9 @@ import com.example.authorization_service.api.models.AuthResponse;
 import com.example.authorization_service.api.models.UserCreatePayload;
 import com.example.authorization_service.core.service.auth.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -30,12 +29,20 @@ public class AuthorizationController {
     }
 
     @PostMapping("/logout")
-    public void logoutUser() {
-        authService.invalidateSession();
+    public void logoutUser(@RequestHeader(value = "Authorization", required = false) String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Отсутствует заголовок авторизации");
+        }
+        String token = authHeader.substring(7);
+        authService.invalidateSession(token);
     }
 
     @PostMapping("/session")
-    public void validateUserSession() {
-        authService.checkSession();
+    public void validateUserSession(@RequestHeader(value = "Authorization", required = false) String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Отсутствует заголовок авторизации");
+        }
+        String token = authHeader.substring(7);
+        authService.checkSession(token);
     }
 }
