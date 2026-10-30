@@ -34,7 +34,8 @@ public class AuthenticationFilter extends OncePerRequestFilter {
                 || path.startsWith("/webjars")
                 || path.equals("/swagger-ui.html")
                 || (request.getMethod().equals("POST") && path.equals("/api/users/new"))
-                || (request.getMethod().equals("GET") && path.startsWith("/api/users/profile/"));
+                || (request.getMethod().equals("GET") && path.startsWith("/api/users/profile/"))
+                && !path.equals("/api/users/profile/me");
     }
 
     @Override
@@ -73,7 +74,9 @@ public class AuthenticationFilter extends OncePerRequestFilter {
         }catch (Exception e) {
             log.error("Error while calling auth service", e);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.getWriter().write("Сервис не доступен");
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().write("{\"error\": \"Сервис авторизации недоступен\"}");
             return;
         }
 

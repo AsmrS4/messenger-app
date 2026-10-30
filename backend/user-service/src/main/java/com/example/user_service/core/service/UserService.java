@@ -1,9 +1,6 @@
 package com.example.user_service.core.service;
 
-import com.example.user_service.api.models.CreatePayload;
-import com.example.user_service.api.models.SearchParams;
-import com.example.user_service.api.models.UpdateCredentials;
-import com.example.user_service.api.models.UpdatePayload;
+import com.example.user_service.api.models.*;
 import com.example.user_service.core.http.AuthenticationClient;
 import com.example.user_service.core.models.Pagination;
 import com.example.user_service.core.models.UserProfile;
@@ -52,8 +49,10 @@ public class UserService implements UserManagement, ProfileService {
     @Transactional
     public UserProfile updateCurrentUserProfile(UpdatePayload payload) {
         UUID currentUserId = getCurrentUser().id();
+        checkUpdateUniqueness(payload, currentUserId);
         repository.updateUser(currentUserId, payload);
-        client.updateCredentials(new UpdateCredentials(currentUserId, payload.getLogin()));
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getCredentials();
+        client.updateCredentials("Bearer " + token, new UpdateCredentials(currentUserId, payload.getLogin()));
         return getProfileByUUID(currentUserId);
     }
 
@@ -87,7 +86,7 @@ public class UserService implements UserManagement, ProfileService {
         return new Users(users, new Pagination(params.getPage() + 1, LIMIT, (int) totalCount));
     }
 
-    private void checkUniqueness(CreatePayload payload) {
+    private void checkUniqueness(UserPayload payload) {
         if(repository.existsByLogin(payload.getLogin()))
             throw new IllegalArgumentException("Логин %s занят".formatted(payload.getLogin()));
 
@@ -95,6 +94,17 @@ public class UserService implements UserManagement, ProfileService {
             throw new IllegalArgumentException("Email %s занят".formatted(payload.getEmail()));
 
         if(repository.existsByPhone(payload.getPhone()))
+            throw new IllegalArgumentException("Номер %s занят".formatted(payload.getPhone()));
+    }
+
+    private void checkUpdateUniqueness(UserPayload payload, UUID currentUserId ) {
+        if(repository.existsByLoginAndNotOwn(payload.getLogin(), currentUserId))
+            throw new IllegalArgumentException("Логин %s занят".formatted(payload.getLogin()));
+
+        if(repository.existsByEmailAndNotOwn(payload.getEmail(), currentUserId))
+            throw new IllegalArgumentException("Email %s занят".formatted(payload.getEmail()));
+
+        if(repository.existsByPhoneAndNotOwn(payload.getPhone(), currentUserId))
             throw new IllegalArgumentException("Номер %s занят".formatted(payload.getPhone()));
     }
 

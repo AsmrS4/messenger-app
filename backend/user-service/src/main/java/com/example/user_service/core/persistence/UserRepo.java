@@ -107,4 +107,25 @@ public interface UserRepo {
             )
             """)
     boolean existsByPhone(@Bind("phone") String phone);
+
+    @SqlQuery("""
+            SELECT EXISTS(
+                SELECT 1 FROM users WHERE users.login = :login AND users.id != :userId
+            )
+            """)
+    boolean existsByLoginAndNotOwn(@Bind("login") String login, @Bind("userId") UUID userId);
+
+    @SqlQuery("""
+            SELECT EXISTS(
+                SELECT 1 FROM users WHERE users.email = :email AND users.id != :userId
+            )
+            """)
+    boolean existsByEmailAndNotOwn(@Bind("email") String email, @Bind("userId") UUID userId);
+
+    @SqlQuery("""
+            SELECT EXISTS(
+                SELECT 1 FROM users WHERE users.phone = :phone AND users.id != :userId
+            )
+            """)
+    boolean existsByPhoneAndNotOwn(@Bind("phone") String phone, @Bind("userId") UUID userId);
 }

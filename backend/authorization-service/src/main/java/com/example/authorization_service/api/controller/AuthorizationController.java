@@ -8,6 +8,7 @@ import com.example.authorization_service.core.service.auth.AuthService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/api/auth")
+@Slf4j
 public class AuthorizationController {
     private final AuthService authService;
 
@@ -52,6 +54,7 @@ public class AuthorizationController {
     @SecurityRequirement(name = "bearerAuth")
     public void validateUserSession(HttpServletRequest request) {
         String authHeader = request.getHeader("Authorization");
+        log.error(authHeader);
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Отсутствует заголовок авторизации");
         }

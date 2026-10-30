@@ -8,6 +8,7 @@ import com.example.user_service.core.models.UserProfile;
 import com.example.user_service.core.models.Users;
 import com.example.user_service.core.service.UserManagement;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -39,7 +40,7 @@ public class UserController {
 
     @GetMapping
     @SecurityRequirement(name = "bearerAuth")
-    public Users retrieveUsers(SearchParams params) {
+    public Users retrieveUsers(@ParameterObject SearchParams params) {
         SearchParams resolved = paramsResolver.resolve(params);
         return userManagement.findAll(resolved);
     }

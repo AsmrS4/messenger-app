@@ -16,6 +16,6 @@ public interface AuthenticationClient {
     @PostMapping("/api/auth/session")
     void checkSession(@RequestHeader("Authorization") String authHeader);
 
-    @PostMapping("/api/auth/credentials")
-    void updateCredentials(@RequestBody UpdateCredentials credentials);
+    @PostMapping("/api/auth/update")
+    void updateCredentials( @RequestHeader("Authorization") String authHeader, @RequestBody UpdateCredentials credentials);
 }
