@@ -15,9 +15,9 @@ public interface UserCredentialsRepository {
     @SqlUpdate("""
             INSERT INTO credentials(user_id, login, hash_password)
             VALUES(:userId, :login, :hashPassword)
+            RETURNING id
             """)
-    @GetGeneratedKeys("id")
-    long saveCredentials(@BindMethods UserLoginCredentials credentials);
+    int saveCredentials(@BindMethods UserLoginCredentials credentials);
 
     @SqlQuery("""
             SELECT EXISTS(

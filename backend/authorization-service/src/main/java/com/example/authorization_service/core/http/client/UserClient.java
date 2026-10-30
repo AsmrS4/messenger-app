@@ -13,13 +13,13 @@ import java.util.UUID;
 
 @FeignClient(
         name = "user-service",
-        url = "user-service.url",
+        url = "${user-service.url}",
         configuration = UserClientConfiguration.class
 )
 public interface UserClient {
     @PostMapping("/api/users/new")
     UserProfile createNewUser(@RequestBody UserCreatePayload payload);
 
-    @GetMapping("/api/users/{userId}")
+    @GetMapping("/api/users/profile/{userId}")
     void existsByUUID(@PathVariable("userId")UUID userId);
 }

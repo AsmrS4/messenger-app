@@ -4,6 +4,7 @@ import com.example.user_service.api.models.UpdatePayload;
 import com.example.user_service.api.resolver.UserPayloadResolver;
 import com.example.user_service.core.models.UserProfile;
 import com.example.user_service.core.service.ProfileService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -23,17 +24,20 @@ public class ProfileController {
     }
 
     @PutMapping("/me")
-    public UserProfile updateUser(UpdatePayload payload) {
+    @SecurityRequirement(name = "bearerAuth")
+    public UserProfile updateUser(@RequestBody UpdatePayload payload) {
         userPayloadResolver.resolveUpdatePayload(payload);
         return profileService.updateCurrentUserProfile(payload);
     }
 
     @GetMapping("/me")
+    @SecurityRequirement(name = "bearerAuth")
     public UserProfile retrieveCurrentUserProfile() {
         return profileService.getCurrentProfile();
     }
 
     @GetMapping("/find")
+    @SecurityRequirement(name = "bearerAuth")
     public UserProfile retrieveUserProfileByLogin(@RequestParam String login) {
         return profileService.getProfileByLogin(login);
     }

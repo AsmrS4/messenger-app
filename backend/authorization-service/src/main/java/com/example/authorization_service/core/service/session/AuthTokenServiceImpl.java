@@ -18,7 +18,7 @@ import java.util.UUID;
 public class AuthTokenServiceImpl implements AccessTokenService {
     @Value("${jwt.secret-key}")
     private String SECRET_KEY;
-    @Value("${jwt.access-lifetime}")
+    @Value("${jwt.life-time}")
     private Duration ACCESS_LIFE_TIME;
 
     private final AccessTokenRepository accessTokenRepository;

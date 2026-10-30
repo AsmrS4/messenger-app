@@ -1,11 +1,15 @@
 package com.example.authorization_service.api.models;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @SuperBuilder
 public class UserCreatePayload {
     private String fullName;

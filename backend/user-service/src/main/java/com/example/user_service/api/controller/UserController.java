@@ -7,6 +7,7 @@ import com.example.user_service.api.resolver.UserPayloadResolver;
 import com.example.user_service.core.models.UserProfile;
 import com.example.user_service.core.models.Users;
 import com.example.user_service.core.service.UserManagement;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -31,12 +32,13 @@ public class UserController {
 
     @PostMapping("/new")
     @ResponseStatus(HttpStatus.CREATED)
-    public UserProfile createNewUser(CreatePayload payload) {
+    public UserProfile createNewUser(@RequestBody CreatePayload payload) {
         userPayloadResolver.resolveCreationPayload(payload);
         return userManagement.createNewUser(payload);
     }
 
     @GetMapping
+    @SecurityRequirement(name = "bearerAuth")
     public Users retrieveUsers(SearchParams params) {
         SearchParams resolved = paramsResolver.resolve(params);
         return userManagement.findAll(resolved);

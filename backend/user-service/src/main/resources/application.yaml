@@ -25,6 +25,16 @@ spring:
     locations: classpath:db/migrations
     baseline-on-migrate: true
 
+logging:
+  level:
+    org.apache.http: DEBUG
+    org.springframework.security: INFO
+    org.springframework.security.web.FilterChainProxy: WARN
+    org.springframework.security.web.header.writers.HstsHeaderWriter: WARN
+
+auth-service:
+  url: http://localhost:8002
+
 jwt:
   secret-key: ${SECRET_KEY:devSecretKeyForLocalDevelopmentOnly123456789}
   life-time: ${ACCESS_LIFETIME:30m}

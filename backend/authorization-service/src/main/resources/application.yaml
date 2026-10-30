@@ -16,7 +16,7 @@ spring:
     name: authorization-service
 
   datasource:
-    url: ${AUTH_DB_URL:jdbc:postgresql://localhost:5432/auth_db}
+    url: ${AUTH_DB_URL:jdbc:postgresql://localhost:5433/auth_db}
     username: ${AUTH_DATASOURCE_USERNAME:postgres}
     password: ${AUTH_DATASOURCE_PASSWORD:postgres}
 
@@ -24,6 +24,16 @@ spring:
     enabled: true
     locations: classpath:db/migrations
     baseline-on-migrate: true
+
+logging:
+  level:
+    org.apache.http: DEBUG
+    org.springframework.security: INFO
+    org.springframework.security.web.FilterChainProxy: WARN
+    org.springframework.security.web.header.writers.HstsHeaderWriter: WARN
+
+user-service:
+  url: http://localhost:8001
 
 jwt:
   secret-key: ${SECRET_KEY:devSecretKeyForLocalDevelopmentOnly123456789}

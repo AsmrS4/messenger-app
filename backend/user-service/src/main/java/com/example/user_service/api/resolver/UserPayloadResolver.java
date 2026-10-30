@@ -9,7 +9,7 @@ import java.time.LocalDate;
 
 @Component
 public class UserPayloadResolver {
-    private final static String EMAIL_REGEX = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,}$";
+    private final static String EMAIL_REGEX = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
     private final static String PHONE_REGEX = "^\\+7[\\s-]?\\(?\\d{3}\\)?[\\s-]?\\d{3}[\\s-]?\\d{2}[\\s-]?\\d{2}$";
     private final static String PASSWORD_REGEX = "^(?=.*[a-zA-Z])(?=.*\\d).+$";
     private final static String PASSWORD_PERMITTED_ALPHABET_REGEX = "^[a-zA-Z0-9]+$";

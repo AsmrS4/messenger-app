@@ -27,6 +27,17 @@ public class AuthenticationFilter extends OncePerRequestFilter {
     private final JwtParser parser;
 
     @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getRequestURI();
+        return path.startsWith("/swagger-ui")
+                || path.startsWith("/v3/api-docs")
+                || path.startsWith("/webjars")
+                || path.equals("/swagger-ui.html")
+                || (request.getMethod().equals("POST") && path.equals("/api/users/new"))
+                || (request.getMethod().equals("GET") && path.startsWith("/api/users/profile/"));
+    }
+
+    @Override
     protected void doFilterInternal(
             HttpServletRequest request,
             HttpServletResponse response,

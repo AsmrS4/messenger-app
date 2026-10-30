@@ -25,6 +25,7 @@ public class AuthService {
 
     public AuthResponse loginUser(AuthCredentials authCredentials) {
         UserLoginCredentials credentials = credentialsRepository.findByLogin(authCredentials.login());
+        if(credentials == null) throw new IllegalArgumentException("Неверный логин или пароль");
         checkUserExisting(credentials);
         checkPassword(authCredentials, credentials);
 

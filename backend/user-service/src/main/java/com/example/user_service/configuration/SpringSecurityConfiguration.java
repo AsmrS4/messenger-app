@@ -40,10 +40,14 @@ public class SpringSecurityConfiguration {
                                         "/v3/api-docs/**",
                                         "/swagger-ui/**",
                                         "/webjars/**",
-                                        "/swagger-ui.html")
+                                        "/swagger-ui.html",
+                                        "/api/users/new",
+                                        "/api/users/profile/{userId}"
+                                        )
                                 .permitAll()
-                                .requestMatchers("/api/users/**").authenticated()
-                                .anyRequest().denyAll()
+                                .requestMatchers("/error").permitAll()
+                                .requestMatchers("/api/users/**", "/api/users/profile/**").authenticated()
+                                .anyRequest().permitAll()
                 )
                 .sessionManagement(c->c.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
