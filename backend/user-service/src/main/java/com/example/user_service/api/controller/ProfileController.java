@@ -26,7 +26,7 @@ public class ProfileController {
         this.profileService = service;
         this.userPayloadResolver = userPayloadResolver;
         this.logger = LogManager.getLogger(ProfileController.class);
-        System.out.println("Текущий логгер системы: {}", logger.getName().toString());
+        System.out.println("Класс логгера: " + logger.getClass().getName());
     }
 
     @PutMapping("/me")
