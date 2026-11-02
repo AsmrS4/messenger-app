@@ -43,6 +43,8 @@ dependencies {
     // Source: https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-starter-webmvc-ui
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.1.1'
 
+    implementation 'org.apache.logging.log4j:log4j-api:2.24.1'
+
     compileOnly 'org.projectlombok:lombok'
 
     runtimeOnly 'org.postgresql:postgresql'
