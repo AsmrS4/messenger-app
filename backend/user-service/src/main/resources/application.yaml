@@ -1,0 +1,40 @@
+server:
+  port: ${USER_PORT:8001}
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+      force-request: true
+      force-response: true
+  tomcat:
+    uri-encoding: UTF-8
+    forward-headers-strategy: framework
+
+spring:
+  application:
+    name: user-service
+
+  datasource:
+    url: ${USER_DB_URL:jdbc:postgresql://localhost:5432/users_db}
+    username: ${USER_DATASOURCE_USERNAME:postgres}
+    password: ${USER_DATASOURCE_PASSWORD:postgres}
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migrations
+    baseline-on-migrate: true
+
+logging:
+  level:
+    org.apache.http: DEBUG
+    org.springframework.security: INFO
+    org.springframework.security.web.FilterChainProxy: WARN
+    org.springframework.security.web.header.writers.HstsHeaderWriter: WARN
+
+auth-service:
+  url: http://localhost:8002
+
+jwt:
+  secret-key: ${SECRET_KEY:devSecretKeyForLocalDevelopmentOnly123456789}
+  life-time: ${ACCESS_LIFETIME:30m}
