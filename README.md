@@ -2,6 +2,8 @@
 
 ## Описание проекта
 Небольшое микросервисное приложение для демонстрации работы библиотеки log4j-api. 
+## Презентация
+https://docs.google.com/presentation/d/1YtXAFJ4M54Xgj58ngvSz744BvrVdr5YqmGBkyVQ0f38/edit?usp=sharing
 
 # Автор
 Сунчугашев Аймир Евгеньевич, 972303
