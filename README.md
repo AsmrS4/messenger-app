@@ -37,4 +37,6 @@ docker compose up -d
  http://localhost:8001/swagger-ui/index.html#/
  http://localhost:8002/swagger-ui/index.html#/
 ```
-!Важно: порты 5432 и 5433 должны быть свободными для поднятия БД.
+## <strong>Важно!</strong> 
+- порты 5432 и 5433 должны быть свободными для поднятия БД.<br>
+- примеры использования логгера находятся в ветках ```demo/simple-logger``` и ```demo/any-logger```
