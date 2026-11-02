@@ -2,11 +2,11 @@ version: '3.8'
 services:
   user-service:
     build:
-      context: ./backend
+      context: .
       dockerfile: user-service/Dockerfile
     container_name: user-service
     environment:
-      - USER_DB_URL=jdbc:postgresql://localhost:5432/users_db
+      - USER_DB_URL=jdbc:postgresql://users-db:5432/users_db
       - USER_DATASOURCE_USER=postgres
       - USER_DATASOURCE_PASSWORD=postgres
     ports:
@@ -19,11 +19,11 @@ services:
 
   auth-service:
     build:
-      context: ./backend
+      context: .
       dockerfile: authorization-service/Dockerfile
     container_name: auth-service
     environment:
-      - AUTH_DB_URL=jdbc:postgresql://localhost:5432/auth_db
+      - AUTH_DB_URL=jdbc:postgresql://auth-db:5432/auth_db
       - AUTH_DATASOURCE_USER=postgres
       - AUTH_DATASOURCE_PASSWORD=postgres
     ports:
