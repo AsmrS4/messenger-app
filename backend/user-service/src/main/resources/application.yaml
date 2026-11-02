@@ -15,6 +15,10 @@ spring:
   application:
     name: user-service
 
+  main:
+    banner-mode: off
+    log-startup-info: false
+
   datasource:
     url: ${USER_DB_URL:jdbc:postgresql://localhost:5432/users_db}
     username: ${USER_DATASOURCE_USERNAME:postgres}
@@ -28,9 +32,7 @@ spring:
 logging:
   level:
     org.apache.http: DEBUG
-    org.springframework.security: INFO
-    org.springframework.security.web.FilterChainProxy: WARN
-    org.springframework.security.web.header.writers.HstsHeaderWriter: WARN
+    org.apache.logging.log4j: DEBUG
 
 auth-service:
   url: http://localhost:8002

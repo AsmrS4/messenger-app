@@ -8,6 +8,8 @@ import com.example.user_service.core.models.UserProfile;
 import com.example.user_service.core.models.Users;
 import com.example.user_service.core.service.UserManagement;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,6 +23,8 @@ public class UserController {
     private final SearchParamsResolver paramsResolver;
     private final UserPayloadResolver userPayloadResolver;
 
+    private final Logger logger;
+
     public UserController(
             @Autowired UserManagement management,
             @Autowired SearchParamsResolver paramsResolver,
@@ -29,13 +33,18 @@ public class UserController {
         this.userManagement = management;
         this.paramsResolver = paramsResolver;
         this.userPayloadResolver = userPayloadResolver;
+
+        this.logger = LogManager.getLogger(UserController.class);
     }
 
     @PostMapping("/new")
     @ResponseStatus(HttpStatus.CREATED)
     public UserProfile createNewUser(@RequestBody CreatePayload payload) {
+        logger.info("Полученные данные от клиента: {}", payload);
         userPayloadResolver.resolveCreationPayload(payload);
-        return userManagement.createNewUser(payload);
+        UserProfile profile = userManagement.createNewUser(payload);
+        logger.info("Создан новый пользователь: {}", profile);
+        return profile;
     }
 
     @GetMapping

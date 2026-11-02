@@ -5,6 +5,8 @@ import com.example.user_service.api.resolver.UserPayloadResolver;
 import com.example.user_service.core.models.UserProfile;
 import com.example.user_service.core.service.ProfileService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -18,9 +20,14 @@ public class ProfileController {
     private final UserPayloadResolver userPayloadResolver;
     private final ProfileService profileService;
 
+    private final Logger logger;
+
     public ProfileController(@Autowired ProfileService service, @Autowired UserPayloadResolver userPayloadResolver) {
         this.profileService = service;
         this.userPayloadResolver = userPayloadResolver;
+
+        this.logger = LogManager.getLogger(ProfileController.class);
+        System.out.println("Класс логгера: " + logger.getClass().getName());
     }
 
     @PutMapping("/me")
@@ -33,7 +40,9 @@ public class ProfileController {
     @GetMapping("/me")
     @SecurityRequirement(name = "bearerAuth")
     public UserProfile retrieveCurrentUserProfile() {
-        return profileService.getCurrentProfile();
+        UserProfile currentUser = profileService.getCurrentProfile();
+        logger.info("Текущий авторизованный пользователь: {}", currentUser);
+        return currentUser;
     }
 
     @GetMapping("/find")

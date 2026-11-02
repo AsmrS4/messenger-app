@@ -3,6 +3,8 @@ package com.example.user_service.api.resolver;
 import com.example.user_service.api.models.CreatePayload;
 import com.example.user_service.api.models.UpdatePayload;
 import com.example.user_service.api.models.UserPayload;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -14,13 +16,31 @@ public class UserPayloadResolver {
     private final static String PASSWORD_REGEX = "^(?=.*[a-zA-Z])(?=.*\\d).+$";
     private final static String PASSWORD_PERMITTED_ALPHABET_REGEX = "^[a-zA-Z0-9]+$";
 
+    private final static Logger logger = LogManager.getLogger(UserPayloadResolver.class);
+
     public void resolveUpdatePayload(UpdatePayload payload) {
-        validate(payload);
+        try {
+            validate(payload);
+        } catch (IllegalArgumentException iae) {
+            logger.error(iae.getMessage());
+            throw iae;
+        } catch (Exception ex) {
+            logger.error("Неожиданное исключение: {}", ex.getMessage());
+            throw ex;
+        }
     }
 
     public void resolveCreationPayload(CreatePayload payload) {
-        validate(payload);
-        validateCreationPayload(payload);
+        try {
+            validate(payload);
+            validateCreationPayload(payload);
+        } catch (IllegalArgumentException iae) {
+            logger.error(iae.getMessage());
+            throw iae;
+        } catch (Exception ex) {
+            logger.error("Неожиданное исключение: {}", ex.getMessage());
+            throw ex;
+        }
     }
 
     private void validate(UserPayload payload) {
